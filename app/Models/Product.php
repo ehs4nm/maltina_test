@@ -27,4 +27,9 @@ class Product extends Model
     {
         return 'slug';
     }
+
+    public function type()
+    {
+        return $this->belongsTo(Type::class);
+    }
 }

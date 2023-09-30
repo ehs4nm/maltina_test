@@ -16,4 +16,9 @@ class Type extends Model
         return $this->hasMany(Option::class);
     }
 
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
 }
