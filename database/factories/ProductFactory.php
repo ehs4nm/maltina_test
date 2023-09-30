@@ -17,7 +17,7 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'name' => fake()->word(),
             'slug' => '', //slug will be produced in boot method of product model
             'price' => round(fake()->numberBetween(0, 999999) /1000)*1000,
         ];
