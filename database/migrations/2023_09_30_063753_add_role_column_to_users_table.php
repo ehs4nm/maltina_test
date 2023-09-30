@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             // Used enum as the roles may not change frequently, if we know the role would change frequently it's better to use string type
-            $table->enum('role', ['MANAGER', 'CUSTOMER'])->nullable()->default('CUSTOMER');
+            $table->enum('role', ['MANAGER', 'CUSTOMER'])->after('name')->nullable()->default('CUSTOMER');
         });
     }
 

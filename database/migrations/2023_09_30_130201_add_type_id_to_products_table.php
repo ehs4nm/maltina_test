@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::table('products', function (Blueprint $table) {
             // Add the foreign key column
-            $table->foreignIdFor(Type::class)->nullable();
+            $table->foreignIdFor(Type::class)->after('name')->nullable();
             // Define the foreign key constraint
             $table->foreign('type_id')->references('id')->on('types')->nullOnDelete();
         });
