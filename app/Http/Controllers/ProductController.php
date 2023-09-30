@@ -59,13 +59,13 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         // Update the product's attributes with the validated request data
-        $updatedProduct = $request->validate([
+        $validUpdatedProduct = $request->validate([
             'name' => 'required|string|max:255',
             'slug'=> 'required|string|max:255',
             'price' => 'required|integer|max:999999|min:0',
         ]);
 
-        $product->update($updatedProduct);
+        $product->update($validUpdatedProduct);
 
         // Return a JSON response with the updated product
         return response()->json($product, 200);
