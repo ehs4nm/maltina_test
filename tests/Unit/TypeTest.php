@@ -37,7 +37,7 @@ class TypeTest extends TestCase
             // Create a type
             $type = Type::factory()->create();
     
-            // Associate the Options with the Type
+            // Associate the product with the Type
             $product->type()->associate($type);
             $product->save();
 
