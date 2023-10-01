@@ -30,8 +30,14 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        // Create a new product instance based on the request data
-        $product = Product::create($request->validated());
+        // Store a newly created product in storage.
+        // Validate the incoming request data.
+        $validatedproductData = $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|integer|min:0|max:999999',
+        ]);
+
+        $product = Product::create($validatedproductData);
 
         // Return a JSON response with the newly created product and HTTP status code 201 (Created)
         return response()->json($product, 201);
