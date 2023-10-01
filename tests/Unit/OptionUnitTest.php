@@ -7,7 +7,7 @@ use App\Models\Type;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class OptionTest extends TestCase
+class OptionUnitTest extends TestCase
 {
     use RefreshDatabase; // Reset the database for each test
 
