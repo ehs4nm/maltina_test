@@ -20,6 +20,10 @@ class Product extends Model
         static::creating(function ($model) {
             $model->slug = Str::slug($model->name, '-');
         });
+
+        static::updating(function ($model) {
+            $model->slug = Str::slug($model->name, '-');
+        });
     }
 
     // Set the route ky for product controller
