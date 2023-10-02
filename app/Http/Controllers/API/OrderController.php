@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\OrderRequest;
 use App\Models\Order;
 use Illuminate\Http\Request;
 
@@ -35,20 +36,14 @@ class OrderController extends Controller
     /**
      * Store a newly created order in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\OrderRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(OrderRequest $request)
     {
         // Store a newly created order in storage.
-        // Validate the incoming request data.
-        $validatedOrderData = $request->validate([
-            'user_id' => 'required|exists:users,id', // Ensure the user_id exists in the 'users' table.
-            'total_price' => 'required|integer|min:0|max:999999',
-            'status' => 'required|in:WAITING,PREPARATION,READY,DELIVERED',
-            'consume_location' => 'required|in:TAKE_AWAY,IN_SHOP',
-        ]);
-
+        // Validate the incoming request data thourogh OrderRequest and Retrieve the validated input data.
+        $validatedOrderData = $request->validated();
         // Create and store the new order using the validated data.
         $order = Order::create($validatedOrderData);
 
@@ -82,21 +77,18 @@ class OrderController extends Controller
     /**
      * Update the specified order in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\OrderRequest  $request
      * @param  \App\Models\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Order $order)
+    public function update(OrderRequest $request, Order $order)
     {
         // Validate the incoming request data.
-        $validUpdatedOrder = $request->validate([
-            'total_price' => 'required|integer|min:0|max:999999',
-            'status' => 'required|in:WAITING,PREPARATION,READY,DELIVERED',
-            'consume_location' => 'required|in:TAKE_AWAY,IN_SHOP',
-        ]);
+        // Validate the incoming request data thourogh OrderRequest and Retrieve the validated input data.
+        $validatedUpdateOrderData = $request->validated();
 
         // Update the specified order with the validated data.
-        $order->update($validUpdatedOrder);
+        $order->update($validatedUpdateOrderData);
 
         // Return a JSON response with the updated order and HTTP status code 200 (OK).
         return response()->json($order, 200);
