@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequest;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,17 +26,15 @@ class ProductController extends Controller
     /**
      * Store a newly created product in storage.
      *
-     * @param  Request  $request
+     * @param  App\Http\Requests\ProductRequest  $request
      * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
         // Store a newly created product in storage.
-        // Validate the incoming request data.
-        $validatedproductData = $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|integer|min:0|max:999999',
-        ]);
+
+        // Validate the incoming request data thourogh OrderRequest and Retrieve the validated input data.
+        $validatedproductData = $request->validated();
 
         $product = Product::create($validatedproductData);
 
@@ -46,7 +45,7 @@ class ProductController extends Controller
     /**
      * Display the specified product.
      *
-     * @param  Product  $product
+     * @param  App\Models\Product  $product
      * @return JsonResponse
      */
     public function show(Product $product)
@@ -58,20 +57,18 @@ class ProductController extends Controller
     /**
      * Update the specified product in storage.
      *
-     * @param  Request  $request
-     * @param  Product  $product
+     * @param  App\Http\Requests\ProductRequest  $request
+     * @param  App\Models\Product  $product
      * @return JsonResponse
      */
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request, Product $product)
     {
         // Update the product's attributes with the validated request data
-        $validUpdatedProduct = $request->validate([
-            'name' => 'required|string|max:255',
-            'slug'=> 'required|string|max:255',
-            'price' => 'required|integer|max:999999|min:0',
-        ]);
 
-        $product->update($validUpdatedProduct);
+        // Validate the incoming request data thourogh OrderRequest and Retrieve the validated input data.
+        $validUpdatedProductData = $request->validated();
+
+        $product->update($validUpdatedProductData);
 
         // Return a JSON response with the updated product
         return response()->json($product, 200);
@@ -80,7 +77,7 @@ class ProductController extends Controller
     /**
      * Remove the specified product from storage.
      *
-     * @param  Product  $product
+     * @param  App\Models\Product  $product
      * @return JsonResponse
      */
     public function destroy(Product $product)
