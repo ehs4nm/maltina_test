@@ -15,6 +15,13 @@ class OrderTest extends TestCase
     /** @test */
     public function it_can_return_all_orders()
     {
+        // Create a customer and generate a Sanctum token
+        $customer = User::factory()->create(['role' => 'CUSTOMER']);
+        $token = $customer->createToken('api-token')->plainTextToken;
+        
+        // Set the Sanctum token on the request headers
+        $headers = ['Authorization' => "Bearer $token"];
+
         // Create customers and orders
         $customer1 = User::factory()->create(['role' => 'CUSTOMER']);
         $customer2 = User::factory()->create(['role' => 'CUSTOMER']);
@@ -34,7 +41,7 @@ class OrderTest extends TestCase
         ]);
 
         // Retrieve all orders
-        $response = $this->get('/api/orders');
+        $response = $this->withHeaders($headers)->get('/api/orders');
 
         // Check if the response includes the orders data
         $response->assertStatus(200)
@@ -55,13 +62,15 @@ class OrderTest extends TestCase
             ->assertJsonCount(2); // Ensure that two orders are returned in the response.
     }
 
-
-
     /** @test */
     public function it_can_store_a_new_order()
     {
-        // Create a customer
+        // Create a customer and generate a Sanctum token
         $customer = User::factory()->create(['role' => 'CUSTOMER']);
+        $token = $customer->createToken('api-token')->plainTextToken;
+
+        // Set the Sanctum token on the request headers
+        $headers = ['Authorization' => "Bearer $token"];
 
         // A valid order data
         $orderData = [
@@ -72,7 +81,7 @@ class OrderTest extends TestCase
         ];
 
         // Send a POST request to store the order
-        $response = $this->post('/api/orders', $orderData);
+        $response = $this->withHeaders($headers)->post('/api/orders', $orderData);
 
         // Check if the response indicates a successful creation (HTTP status code 201 Created)
         $response->assertStatus(201);
@@ -87,9 +96,13 @@ class OrderTest extends TestCase
     /** @test */
     public function it_can_read_an_order()
     {
-        // Create a customer
+        // Create a customer and generate a Sanctum token
         $customer = User::factory()->create(['role' => 'CUSTOMER']);
-        
+        $token = $customer->createToken('api-token')->plainTextToken;
+
+        // Set the Sanctum token on the request headers
+        $headers = ['Authorization' => "Bearer $token"];
+
         // Create an order
         $order = Order::create([
             'user_id' => $customer->id,
@@ -99,7 +112,7 @@ class OrderTest extends TestCase
         ]);
 
         // Retrieve the order
-        $response = $this->get("/api/orders/{$order->id}");
+        $response = $this->withHeaders($headers)->get("/api/orders/{$order->id}");
 
         // Check if the response includes the order data
         $response->assertStatus(200)
@@ -114,11 +127,18 @@ class OrderTest extends TestCase
     /** @test */
     public function it_can_update_an_order()
     {
+        // Create a customer and generate a Sanctum token
+        $customer = User::factory()->create(['role' => 'CUSTOMER']);
+        $token = $customer->createToken('api-token')->plainTextToken;
+
+        // Set the Sanctum token on the request headers
+        $headers = ['Authorization' => "Bearer $token"];
+        
         // Create a order
         $order = order::factory()->create();
 
         // Update the order
-        $response = $this->put("/api/orders/{$order->id}", [
+        $response = $this->withHeaders($headers)->put("/api/orders/{$order->id}", [
             'total_price' => 560000, 
             'status' => 'DELIVERED',  
             'consume_location' => 'TAKE_AWAY', 
@@ -138,11 +158,18 @@ class OrderTest extends TestCase
     /** @test */
     public function it_can_delete_an_order()
     {
+        // Create a customer and generate a Sanctum token
+        $customer = User::factory()->create(['role' => 'CUSTOMER']);
+        $token = $customer->createToken('api-token')->plainTextToken;
+
+        // Set the Sanctum token on the request headers
+        $headers = ['Authorization' => "Bearer $token"];
+        
         // Create a order
         $order = order::factory()->create();
 
         // Delete the order
-        $response = $this->delete("/api/orders/{$order->id}");
+        $response = $this->withHeaders($headers)->delete("/api/orders/{$order->id}");
 
         // Check if the order has been deleted from the database
         $this->assertDatabaseMissing('orders', ['id' => $order->id]);
