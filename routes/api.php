@@ -15,10 +15,9 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::resource('/orders', OrderController::class);
-Route::resource('/products', ProductController::class);
 
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function () {
+    Route::resource('/orders', OrderController::class);
+    Route::resource('/products', ProductController::class);
 });
