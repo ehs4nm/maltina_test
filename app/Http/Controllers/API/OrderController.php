@@ -29,16 +29,6 @@ class OrderController extends Controller
     }
 
     /**
-     * Show the form for creating a new order.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        // Show the form for creating a new order (not implemented).
-    }
-
-    /**
      * Store a newly created order in storage.
      *
      * @param  App\Http\Requests\OrderRequest  $request
@@ -66,17 +56,6 @@ class OrderController extends Controller
     {
         // Return a JSON response with the specified order and HTTP status code 200 (OK).
         return response()->json($order, 200);
-    }
-
-    /**
-     * Show the form for editing the specified order.
-     *
-     * @param  \App\Models\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Order $order)
-    {
-        // Show the form for editing the specified order (not implemented).
     }
 
     /**
