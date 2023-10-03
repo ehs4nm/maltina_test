@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -16,6 +17,10 @@ class ProductTest extends TestCase
     /** @test */
     public function it_can_return_all_products()
     {
+        // Create a user
+        $user = User::factory(['role' => 'CUSTOMER'])->create(); 
+        $this->actingAs($user);
+
         // Create products
         $product1 = Product::factory()->create();
         $product2 = Product::factory()->create();
@@ -43,6 +48,10 @@ class ProductTest extends TestCase
     /** @test */
     public function it_can_store_a_new_product()
     {   
+        // Create a user
+        $user = User::factory(['role' => 'CUSTOMER'])->create(); 
+        $this->actingAs($user);
+        
         // A valid product data
         $productData = [
             'name' => 'Latte',
@@ -65,6 +74,10 @@ class ProductTest extends TestCase
     /** @test */
     public function it_can_read_a_product()
     {
+        // Create a user
+        $user = User::factory(['role' => 'CUSTOMER'])->create(); 
+        $this->actingAs($user);
+
         // Create a product
         $product = Product::factory()->create();
 
@@ -83,6 +96,10 @@ class ProductTest extends TestCase
     /** @test */
     public function it_can_update_a_product()
     {
+        // Create a user
+        $user = User::factory(['role' => 'CUSTOMER'])->create(); 
+        $this->actingAs($user);
+
         // Create a product
         $product = Product::factory()->create();
 
@@ -108,6 +125,10 @@ class ProductTest extends TestCase
     /** @test */
     public function it_can_delete_a_product()
     {
+        // Create a user
+        $user = User::factory(['role' => 'CUSTOMER'])->create(); 
+        $this->actingAs($user);
+        
         // Create a product
         $product = Product::factory()->create();
 
