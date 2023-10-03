@@ -23,8 +23,8 @@ class OrderRequest extends FormRequest
     {
         return [
             'user_id' => 'nullable|exists:users,id', // Ensure the user_id exists in the 'users' table.
-            'total_price' => 'required|integer|min:0|max:999999',
-            'status' => 'required|in:WAITING,PREPARATION,READY,DELIVERED',
+            'total_price' => 'nullable|integer|min:0|max:999999',
+            'status' => 'nullable|in:WAITING,PREPARATION,READY,DELIVERED',
             'consume_location' => 'required|in:TAKE_AWAY,IN_SHOP',
         ];
     }
