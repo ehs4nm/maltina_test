@@ -13,11 +13,11 @@ class OrderApiTest extends TestCase
     use RefreshDatabase; // Reset the database for each test
 
     /** @test */
-    public function it_can_return_all_orders()
+    public function a_manager_can_return_all_orders()
     {
-        // Create a customer and generate a Sanctum token
-        $customer = User::factory()->create(['role' => 'CUSTOMER']);
-        $token = $customer->createToken('api-token')->plainTextToken;
+        // Create a manager and generate a Sanctum token
+        $manager = User::factory()->create(['role' => 'MANAGER']);
+        $token = $manager->createToken('api-token')->plainTextToken;
         
         // Set the Sanctum token on the request headers
         $headers = ['Authorization' => "Bearer $token"];
@@ -60,6 +60,104 @@ class OrderApiTest extends TestCase
                 ],
             ])
             ->assertJsonCount(2); // Ensure that two orders are returned in the response.
+    }
+
+    /** @test */
+    public function a_customer_cannot_return_all_orders_not_his()
+    {
+        // Create a customer and generate a Sanctum token
+        $customer = User::factory()->create(['role' => 'CUSTOMER']);
+        $token = $customer->createToken('api-token')->plainTextToken;
+        
+        // Set the Sanctum token on the request headers
+        $headers = ['Authorization' => "Bearer $token"];
+
+        // Create customers and orders
+        $customer1 = User::factory()->create(['role' => 'CUSTOMER']);
+        $customer2 = User::factory()->create(['role' => 'CUSTOMER']);
+
+        $order1 = Order::factory()->create([
+            'user_id' => $customer1->id,
+            'total_price' => 150000,
+            'status' => 'WAITING',
+            'consume_location' => 'IN_SHOP',
+        ]);
+
+        $order2 = Order::factory()->create([
+            'user_id' => $customer2->id,
+            'total_price' => 200000,
+            'status' => 'PREPARATION',
+            'consume_location' => 'TAKE_AWAY',
+        ]);
+
+        // Retrieve all orders
+        $response = $this->withHeaders($headers)->get('/api/orders');
+
+        // Check if the response is 403 (not allowed)
+        $response->assertStatus(403); 
+    }
+
+    /** @test */
+    public function a_customer_can_retrive_all_his_own_orders()
+    {
+        // Create a customer and generate a Sanctum token
+        $customerOne = User::factory()->create(['role' => 'CUSTOMER']);
+        $token = $customerOne->createToken('api-token')->plainTextToken;
+        
+        // Set the Sanctum token on the request headers
+        $headers = ['Authorization' => "Bearer $token"];
+
+        // Create customers and orders
+        $customerTwo = User::factory()->create(['role' => 'CUSTOMER']);
+        $customerThree = User::factory()->create(['role' => 'CUSTOMER']);
+
+        $customerOneOrders = Order::factory(3)->create([
+            'user_id' => $customerOne->id,
+            'total_price' => round(fake()->numberBetween(100000, 900000) /1000) * 1000,
+            'status' => fake()->randomElement(['WAITING','PREPARATION','READY','DELIVERED']),
+            'consume_location' => fake()->randomElement(['TAKE_AWAY', 'IN_SHOP']),
+        ]);
+
+        $customerTwoOrders = Order::factory(3)->create([
+            'user_id' => $customerTwo->id,
+            'total_price' => round(fake()->numberBetween(100000, 900000) /1000) * 1000,
+            'status' => fake()->randomElement(['WAITING','PREPARATION','READY','DELIVERED']),
+            'consume_location' => fake()->randomElement(['TAKE_AWAY', 'IN_SHOP']),
+        ]);
+            
+        $customerThreeOrders = Order::factory(3)->create([
+            'user_id' => $customerThree->id,
+            'total_price' => round(fake()->numberBetween(100000, 900000) /1000) * 1000,
+            'status' => fake()->randomElement(['WAITING','PREPARATION','READY','DELIVERED']),
+            'consume_location' => fake()->randomElement(['TAKE_AWAY', 'IN_SHOP']),
+        ]);
+
+        // Retrieve all customerOne's orders
+        $response = $this->withHeaders($headers)->get("/api/users/{$customerOne->id}/orders/");
+
+        // Check if the response includes the orders data
+        $response->assertStatus(200)
+            ->assertJson([
+                [
+                    'user_id' => $customerOne->id,
+                    'total_price' => $customerOneOrders->total_price,
+                    'status' =>  $customerOneOrders->status,
+                    'consume_location' =>  $customerOneOrders->consume_location,
+                ],
+                [
+                    'user_id' => $customerTwo->id,
+                    'total_price' =>  $customerOneOrders->total_price,
+                    'status' =>  $customerOneOrders->status,
+                    'consume_location' =>  $customerOneOrders->consume_location,
+                ],
+                [
+                    'user_id' => $customerThree->id,
+                    'total_price' => $customerOneOrders->total_price,
+                    'status' =>  $customerOneOrders->status,
+                    'consume_location' =>  $customerOneOrders->consume_location,
+                ],
+            ])
+            ->assertJsonCount(3); // Ensure that two orders are returned in the response.
     }
 
     /** @test */
