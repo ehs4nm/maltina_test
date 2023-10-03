@@ -1,66 +1,93 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# maltina_test
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+I haven't finished the task yet, but i am commiting more, in this week.
 
-## About Laravel
+Rock star shop Challenge
+A RESTful Laravel development challenge for managing a small coffee shop
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Introduction
+In this challenge, I am going to develop a small Laravel web application which manages Rock star coffee shop orders via REST APIs.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- In Rock star, the manager can define variety of products via admin panel. 
+- Customers are able to order and customize their coffee with several options. 
+- Orders can have a status: waiting, preparation, ready, delivered. 
+- Manager can change orders status.
+- After each status change on order, I would notify the customer via email.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+A sample catalog of products offered by Rock star could be like this:
+   - Production > Customization option
+     - Latte > Milk: skim, semi, whole
+     - Cappuccino > Size: small, medium, large
+     - Hot chocolate > Size: small, medium, large
+     - Espresso > Shots: single, double, triple
+     - Cookie > Kind: chocolate chip, ginger
+     - Tea
+     - All > Consume location: take away, in shop
 
-## Learning Laravel
+The following REST APIs should be implemented and any customer should be able to consume the API using a secure way:
+    - View Menu (list of products)        
+    - Order at coffee shop with options
+    - View his order (product list, pricing & order status)
+    - Change a waiting order
+    - Cancel waiting orders => as there are no "cancel" in status condition, i asume it meant a soft-delete by the customer
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+* As mentioned in the Challenge description, For the sake of simplicity, I'll consider each product has a constant price no matter which option is selected.
+* API response format is up to me.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+I will go with TDD aproche and in the first step i would create the ProductControllerTest. Then Product models, a few Factory/seeder classes. Then define the controller itself.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+In this challenge i would simply use "role" field to define the role. There are variuos ways to manage this better, (ex: roles, using role_user and permission_role,.. tables or using spatie/laravel-permission package).
 
-## Laravel Sponsors
+##Product model
+As my understanding of the product description, the products can have just one type at a time (Cookie has "Kind" type and does not have "Shots" type).
+I used string type for "type" and "customizations" field as it could added/change over time.
+Price is unsignedInteger as a non-decimal price we use in rials. It could be an unsignedBigInteger too.
+I want the ability to extend the behavior of products (types and customizations) without modifying the existing Product class (OCP principle). 
+First defining ProductModelTest.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+##Order model
+I use Enum for "consume_location" and "status" fields as i assume they won't change frequently.
+Orders are softdeleted so the record of orders are maintaned, specially if a customer wants to cancel an order (as we don't have a delete or cancel status for it).
 
-### Premium Partners
+I use seperate event, listener and notification classes so it could be more decoupled, maybe we need to add an sms notification later or save the event in the DB or ..
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
 
-## Contributing
+## RESULTS
+| # 	| Description                                      	| Status 	|
+|---	|--------------------------------------------------	|--------	|
+| 1 	| TDD                                              	| ongoing 🔲|
+| 2 	| Admin Panel: Manager can define products          | ongoing 🔲|
+| 3 	| Admin Panel: Manager can change orders status     | ongoing 🔲|
+| 4 	| REST API: View Menu (list of products)            | ✅|
+| 5 	| REST API: Order at coffee shop with options       | ongoing 🔲|
+| 6 	| REST API: View his/her order (product list, pricing & order status) | ✅|
+| 7 	| REST API: Change a waiting order                  | ✅|
+| 8 	| REST API: Cancel a waiting order                  | ✅|
+| 9 	| After each status change on order: notify the customer via email.          | ✅|
+| 10 	| clone the repository (public mode)               	| ✅|
+| 11 	| Clean git commits that shows my work progress. 	  | ✅|
+| 12 	| meaningful comments and docstrings                | ongoing 🔲|
+| 13 	| Swagger 	                                        | Not Yet ❌|
+|---	|--------------------------------------------------	|--------	|
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Code of Conduct
+## TEST RESULTS
+Throughout the project, various aspects have been thoroughly tested. Here are the test results:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+![](./docs/test-results.png)
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# HOW TO USE THE CODE BASE
+To get started with the code base, follow these instructions:
 
-## License
+##UP AND RUNNING
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+You can run the entire project as a container using the following commands:
+
+    # for the first time use 
+    composer update
+    
+## You may access Swagger documentation
+
+at: http://127.0.0.1/api/documentation
