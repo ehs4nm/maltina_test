@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\OrderController;
+use App\Http\Controllers\API\UserOrderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,5 +20,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::resource('/orders', OrderController::class);
+    Route::resource('/users/{user}/orders', UserOrderController::class);
     Route::resource('/products', ProductController::class);
 });
