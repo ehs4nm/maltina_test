@@ -136,7 +136,7 @@ class OrderApiTest extends TestCase
         $response = $this->withHeaders($headers)->get("/api/users/{$customerOne->id}/orders/");
 
         // Check if the response includes the orders data
-        $response->dump()->assertStatus(200)
+        $response->assertStatus(200)
             ->assertJson([
                 [
                     'user_id' => $customerOne->id,
@@ -161,7 +161,38 @@ class OrderApiTest extends TestCase
     }
 
     /** @test */
-    public function it_can_store_a_new_order()
+    public function a_manager_can_store_a_new_order()
+    {
+        // Create a manager and generate a Sanctum token
+        $manager = User::factory()->create(['role' => 'MANAGER']);
+        $token = $manager->createToken('api-token')->plainTextToken;
+
+        // Set the Sanctum token on the request headers
+        $headers = ['Authorization' => "Bearer $token"];
+
+        // A valid order data
+        $orderData = [
+            'user_id' => $manager->id,
+            'total_price' => 150000,
+            'status' => 'WAITING',
+            'consume_location' => 'IN_SHOP',
+        ];
+
+        // Send a POST request to store the order
+        $response = $this->withHeaders($headers)->post('/api/orders', $orderData);
+
+        // Check if the response indicates a successful creation (HTTP status code 201 Created)
+        $response->assertStatus(201);
+
+        // Check if the response includes the created order data
+        $response->assertJson($orderData);
+
+        // Check if the order is actually stored in the database
+        $this->assertDatabaseHas('orders', $orderData);
+    }
+
+    /** @test */
+    public function a_customer_can_store_a_new_order_directly()
     {
         // Create a customer and generate a Sanctum token
         $customer = User::factory()->create(['role' => 'CUSTOMER']);
@@ -192,7 +223,7 @@ class OrderApiTest extends TestCase
     }
 
     /** @test */
-    public function it_can_read_an_order()
+    public function a_customer_can_read_an_order()
     {
         // Create a customer and generate a Sanctum token
         $customer = User::factory()->create(['role' => 'CUSTOMER']);
@@ -223,7 +254,7 @@ class OrderApiTest extends TestCase
     }
 
     /** @test */
-    public function it_can_update_an_order()
+    public function a_customer_can_update_his_waiting_order()
     {
         // Create a customer and generate a Sanctum token
         $customer = User::factory()->create(['role' => 'CUSTOMER']);
@@ -233,19 +264,16 @@ class OrderApiTest extends TestCase
         $headers = ['Authorization' => "Bearer $token"];
         
         // Create a order
-        $order = order::factory()->create();
+        $order = order::factory()->create(['status' => 'WAITING', 'consume_location' => 'IN_SHOP',]);
 
         // Update the order
         $response = $this->withHeaders($headers)->put("/api/orders/{$order->id}", [
-            'total_price' => 560000, 
-            'status' => 'DELIVERED',  
             'consume_location' => 'TAKE_AWAY', 
         ]);
 
         // Check if the order attributes have been updated in the database
         $this->assertDatabaseHas('orders', [
-            'total_price' => 560000, 
-            'status' => 'DELIVERED',  
+            'status' => 'WAITING',  
             'consume_location' => 'TAKE_AWAY', 
         ]);
 
@@ -254,7 +282,7 @@ class OrderApiTest extends TestCase
     }
 
     /** @test */
-    public function it_can_delete_an_order()
+    public function a_customer_cannot_update_his_order_if_not_waiting()
     {
         // Create a customer and generate a Sanctum token
         $customer = User::factory()->create(['role' => 'CUSTOMER']);
@@ -264,13 +292,95 @@ class OrderApiTest extends TestCase
         $headers = ['Authorization' => "Bearer $token"];
         
         // Create a order
-        $order = order::factory()->create();
+        $order = order::factory()->create(['status' => 'DELIVERED', 'consume_location' => 'IN_SHOP',]);
+
+        // Update the order
+        $response = $this->withHeaders($headers)->put("/api/orders/{$order->id}", [
+            'consume_location' => 'TAKE_AWAY', 
+        ]);
+
+        // Check if the response indicates forbidden (HTTP status code 403)
+        $response->assertStatus(403);
+
+        // Check if the order attributes have been updated in the database, IT SHOULD NOT
+        $this->assertDatabaseHas('orders', [
+            'total_price' => $order->total_price, 
+            'consume_location' => 'IN_SHOP', 
+        ]);
+    }
+    
+    /** @test */
+    public function a_manager_can_delete_an_order()
+    {
+        // Create a manager and generate a Sanctum token
+        $manager = User::factory()->create(['role' => 'MANAGER']);
+        $token = $manager->createToken('api-token')->plainTextToken;
+
+        // Set the Sanctum token on the request headers
+        $headers = ['Authorization' => "Bearer $token"];
+        
+        // Create a order
+        $order = order::factory()->create(['status' => 'DELIVERED',]);
 
         // Delete the order
         $response = $this->withHeaders($headers)->delete("/api/orders/{$order->id}");
 
         // Check if the order has been deleted from the database
-        $this->assertDatabaseMissing('orders', ['id' => $order->id]);
+        $this->assertSoftDeleted('orders', ['id' => $order->id]);
+
+        // Check if the response indicates success (HTTP status code 204 for No Content)
+        $response->assertStatus(204);
+    }
+
+    /** @test */
+    public function a_customer_cannot_delete_an_order_if_not_waiting()
+    {
+        // Create a customer and generate a Sanctum token
+        $customer = User::factory()->create(['role' => 'CUSTOMER']);
+        $token = $customer->createToken('api-token')->plainTextToken;
+
+        // Set the Sanctum token on the request headers
+        $headers = ['Authorization' => "Bearer $token"];
+        
+        // Create a order
+        $order = order::factory()->create(['status' => 'DELIVERED',]);
+
+        // Delete the order
+        $response = $this->withHeaders($headers)->delete("/api/orders/{$order->id}");
+
+        // Check if the order has been soft deleted from the database
+        $this->assertDatabaseHas('orders', [
+            'user_id' => $customer->id,
+            'total_price' => $order->total_price,
+            'status' => $order->status,
+            'consume_location' => $order->consume_location,
+            'deleted_at' => null, // Check that the deleted_at column is null (not soft deleted)
+        ]);
+
+        // Check if the response indicates success (HTTP status code 204 for No Content)
+        $response->assertStatus(403);
+    }
+
+    /** @test */
+    public function a_customer_can_delete_a_waiting_order()
+    {
+        // Create a customer and generate a Sanctum token
+        $customer = User::factory()->create(['role' => 'CUSTOMER']);
+        $token = $customer->createToken('api-token')->plainTextToken;
+
+        // Set the Sanctum token on the request headers
+        $headers = ['Authorization' => "Bearer $token"];
+        
+        // Create a order
+        $order = order::factory()->create(['status' => 'WAITING',]);
+
+        // Delete the order
+        $response = $this->withHeaders($headers)->delete("/api/orders/{$order->id}");
+
+        // Check if the order has been soft deleted from the database
+        $this->assertSoftDeleted('orders', [
+            'id' => $order->id,
+        ]);
 
         // Check if the response indicates success (HTTP status code 204 for No Content)
         $response->assertStatus(204);

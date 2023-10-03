@@ -39,6 +39,7 @@ class OrderController extends Controller
         // Store a newly created order in storage.
         // Validate the incoming request data thourogh OrderRequest and Retrieve the validated input data.
         $validatedOrderData = $request->validated();
+        
         // Create and store the new order using the validated data.
         $order = Order::create($validatedOrderData);
 
@@ -71,11 +72,17 @@ class OrderController extends Controller
         // Validate the incoming request data thourogh OrderRequest and Retrieve the validated input data.
         $validatedUpdateOrderData = $request->validated();
 
-        // Update the specified order with the validated data.
-        $order->update($validatedUpdateOrderData);
+        if(auth()->user()->role === 'CUSTOMER' && $order->status === 'WAITING') {
+            $order->update($validatedUpdateOrderData); // Update the specified order if user is a customer and order is waiting.
+            return response()->json(null, 200); // Return a JSON response with a success message and HTTP status code OK.
+        }
+        
+        if(auth()->user()->role === 'MANAGER') {
+            $order->update($validatedUpdateOrderData); // Update the specified order if user is a manager.
+            return response()->json(null, 200); // Return a JSON response with a success message and HTTP status code OK.
+        }
 
-        // Return a JSON response with the updated order and HTTP status code 200 (OK).
-        return response()->json($order, 200);
+        return response()->json(null, 403);
     }
 
     /**
@@ -86,10 +93,16 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        // Delete the specified order from the database.
-        $order->delete();
+        if(auth()->user()->role === 'CUSTOMER' && $order->status === 'WAITING') {
+            $order->delete(); // Delete the specified order from the database if user is a customer and order is waiting.
+            return response()->json(null, 204); // Return a JSON response with a success message and HTTP status code 204 (No Content).
+        }
+        
+        if(auth()->user()->role === 'MANAGER') {
+            $order->delete(); // Delete the specified order from the database if user is a manager.
+            return response()->json(null, 204); // Return a JSON response with a success message and HTTP status code 204 (No Content).
+        }
 
-        // Return a JSON response with a success message and HTTP status code 204 (No Content).
-        return response()->json(null, 204);
+        return response()->json(null, 403);
     }
 }
