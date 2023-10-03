@@ -6,6 +6,7 @@ use App\Models\Option;
 use App\Models\Product;
 use App\Models\Type;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ProductUnitTest extends TestCase
