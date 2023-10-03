@@ -136,25 +136,25 @@ class OrderApiTest extends TestCase
         $response = $this->withHeaders($headers)->get("/api/users/{$customerOne->id}/orders/");
 
         // Check if the response includes the orders data
-        $response->assertStatus(200)
+        $response->dump()->assertStatus(200)
             ->assertJson([
                 [
                     'user_id' => $customerOne->id,
-                    'total_price' => $customerOneOrders->total_price,
-                    'status' =>  $customerOneOrders->status,
-                    'consume_location' =>  $customerOneOrders->consume_location,
+                    'total_price' => $customerOneOrders[0]->total_price,
+                    'status' =>  $customerOneOrders[0]->status,
+                    'consume_location' =>  $customerOneOrders[0]->consume_location,
                 ],
                 [
-                    'user_id' => $customerTwo->id,
-                    'total_price' =>  $customerOneOrders->total_price,
-                    'status' =>  $customerOneOrders->status,
-                    'consume_location' =>  $customerOneOrders->consume_location,
+                    'user_id' => $customerOne->id,
+                    'total_price' =>  $customerOneOrders[1]->total_price,
+                    'status' =>  $customerOneOrders[1]->status,
+                    'consume_location' =>  $customerOneOrders[1]->consume_location,
                 ],
                 [
-                    'user_id' => $customerThree->id,
-                    'total_price' => $customerOneOrders->total_price,
-                    'status' =>  $customerOneOrders->status,
-                    'consume_location' =>  $customerOneOrders->consume_location,
+                    'user_id' => $customerOne->id,
+                    'total_price' => $customerOneOrders[2]->total_price,
+                    'status' =>  $customerOneOrders[2]->status,
+                    'consume_location' =>  $customerOneOrders[2]->consume_location,
                 ],
             ])
             ->assertJsonCount(3); // Ensure that two orders are returned in the response.
