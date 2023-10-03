@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class OrderTest extends TestCase
+class OrderApiTest extends TestCase
 {
     use RefreshDatabase; // Reset the database for each test
 
