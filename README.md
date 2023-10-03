@@ -2,6 +2,10 @@
 
 I haven't finished the task yet, but i am commiting more, in this week.
 
+1. I will add some blade page for admin panel and change the test acordingly
+2. the procces of reserveing some product with selected option is ongoing.
+--------------------------------------------------------------------------------
+
 Rock star shop Challenge
 A RESTful Laravel development challenge for managing a small coffee shop
 
