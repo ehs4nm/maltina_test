@@ -39,4 +39,36 @@ class OrderUnitTest extends TestCase
         $this->assertEquals('WAITING', $order->status);
         $this->assertEquals('IN_SHOP', $order->consume_location);
     }
+
+    /** @test */
+    public function an_order_belongs_to_a_user()
+    {
+        // Create a user and an order associated with that user
+        $user = User::factory()->create();
+        $order = Order::factory()->create(['user_id' => $user->id]);
+
+        // Retrieve the user's orders
+        $userOrders = $user->orders;
+
+        // Assert that the user has one order and it matches the created order
+        $this->assertCount(1, $userOrders);
+        $this->assertTrue($userOrders->contains($order));
+    }
+
+    /** @test */
+    public function a_user_has_many_orders()
+    {
+        // Create a user and multiple orders associated with that user
+        $user = User::factory()->create();
+        $orders = Order::factory(3)->create(['user_id' => $user->id]);
+
+        // Retrieve the user's orders
+        $userOrders = $user->orders;
+
+        // Assert that the user has three orders and they match the created orders
+        $this->assertCount(3, $userOrders);
+        foreach ($orders as $order) {
+            $this->assertTrue($userOrders->contains($order));
+        }
+    }
 }

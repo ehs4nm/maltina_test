@@ -11,4 +11,8 @@ class Order extends Model
 
     protected $fillable = ['total_price', 'status', 'consume_location', 'user_id'];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
