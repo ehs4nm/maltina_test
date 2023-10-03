@@ -19,7 +19,7 @@ class OrderResource extends JsonResource
             'status' => $this->status,
             'total_price' => $this->total_price,
             'consume_location' => $this->consume_location,
-            // 'user_id' => $this->user_id, // it should be hidded too, not letting the consumer know the id for users
+            'user_id' => $this->user_id, // it should be hidded too, not letting the consumer know the id for users
         ];
     }
 }
