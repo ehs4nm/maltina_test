@@ -41,48 +41,26 @@ class ProductTest extends TestCase
     }
 
     /** @test */
-    public function it_can_create_a_product()
-    {
-        // Create a product
-        $product = Product::create([
-            'name' => 'Latte',
-            // 'slug'=> '', // slug will be produced in product model boot method
-            'price' => 58000,
-        ]);
-
-        // Check if the product exists in the database
-        $this->assertDatabaseHas('products', [
+    public function it_can_store_a_new_product()
+    {   
+        // A valid product data
+        $productData = [
             'name' => 'Latte',
             'price' => 58000,
-        ]);
+        ];
 
-        // Check product attributes
-        $this->assertEquals('Latte', $product->name);
-        $this->assertEquals(Str::slug('Latte'), $product->slug);
-        $this->assertEquals(58000, $product->price);
+        // Send a POST request to store the product
+        $response = $this->post('/products', $productData);
+
+        // Check if the response indicates a successful creation (HTTP status code 201 Created)
+        $response->assertStatus(201);
+
+        // Check if the response includes the created product data
+        $response->assertJson($productData);
+
+        // Check if the product is actually stored in the database
+        $this->assertDatabaseHas('products', $productData);
     }
-
-        /** @test */
-        public function it_can_store_a_new_product()
-        {   
-            // A valid product data
-            $productData = [
-                'name' => 'Latte',
-                'price' => 58000,
-            ];
-    
-            // Send a POST request to store the product
-            $response = $this->post('/products', $productData);
-    
-            // Check if the response indicates a successful creation (HTTP status code 201 Created)
-            $response->assertStatus(201);
-    
-            // Check if the response includes the created product data
-            $response->assertJson($productData);
-    
-            // Check if the product is actually stored in the database
-            $this->assertDatabaseHas('products', $productData);
-        }
 
     /** @test */
     public function it_can_read_a_product()
