@@ -157,7 +157,7 @@ class OrderApiTest extends TestCase
                     'consume_location' =>  $customerOneOrders[2]->consume_location,
                 ],
             ])
-            ->assertJsonCount(3); // Ensure that two orders are returned in the response.
+            ->assertJsonCount(3); // Ensure that three orders are returned in the response.
     }
 
     /** @test */
