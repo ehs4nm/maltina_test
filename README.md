@@ -62,18 +62,21 @@ Lets create a cart so we can keep track of products and selected options that us
 | # 	| Description                                      	| Status 	|
 |---	|--------------------------------------------------	|--------	|
 | 1 	| TDD                                              	| ongoing 🔲|
+| 2 	| Api: Manager can define products                  | Done ✅|
+| 3 	| Api: Manager can change orders status             | Done ✅|
 | 2 	| Admin Panel: Manager can define products          | ongoing 🔲|
 | 3 	| Admin Panel: Manager can change orders status     | ongoing 🔲|
-| 4 	| REST API: View Menu (list of products)            | ✅|
-| 5 	| REST API: Order at coffee shop with options       | ongoing 🔲|
-| 6 	| REST API: View his/her order (product list, pricing & order status) | ✅|
-| 7 	| REST API: Change a waiting order                  | ✅|
-| 8 	| REST API: Cancel a waiting order                  | ✅|
-| 9 	| After each status change on order: notify the customer via email.          | ✅|
-| 10 	| clone the repository (public mode)               	| ✅|
-| 11 	| Clean git commits that shows my work progress. 	  | ✅|
+| 4 	| REST API: View Menu (list of products)            | Done ✅|
+| 5 	| REST API: Order at coffee shop with options       | Done ✅|
+| 6 	| REST API: View his/her order (product list, pricing & order status) | Done ✅|
+| 7 	| REST API: Change a waiting order                  | Done ✅|
+| 8 	| REST API: Cancel a waiting order                  | Done ✅|
+| 9 	| After each status change on order: notify the customer via email.          | Done ✅|
+| 10 	| clone the repository (public mode)               	| Done ✅|
+| 11 	| Clean git commits that shows my work progress. 	  | Done ✅|
 | 12 	| meaningful comments and docstrings                | ongoing 🔲|
-| 13 	| Swagger 	                                        | Not Yet ❌|
+| 13 	| Refactoring and Add services                      | Not Yet ❌|
+| 14 	| Swagger 	                                        | Not Yet ❌|
 |---	|--------------------------------------------------	|--------	|
 
 

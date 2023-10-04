@@ -4,13 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
 use App\Models\Product;
+use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function __construct()
+    private $productService;
+
+    public function __construct(ProductService $productService)
     {
+        $this->productService = $productService;
         $this->authorizeResource(Product::class, 'product');
     }
     /**
@@ -37,10 +41,11 @@ class ProductController extends Controller
     {
         // Store a newly created product in storage.
 
-        // Validate the incoming request data thourogh OrderRequest and Retrieve the validated input data.
-        $validatedproductData = $request->validated();
+        // Validate the incoming request data thourogh ProductRequest and Retrieve the validated input data.
+        $validatedProductData = $request->validated();
 
-        $product = Product::create($validatedproductData);
+        // Create and store the new order using the ProductService.
+        $product = $this->productService->createProduct($validatedProductData);
 
         // Return a JSON response with the newly created product and HTTP status code 201 (Created)
         return response()->json($product, 201);
@@ -72,10 +77,14 @@ class ProductController extends Controller
         // Validate the incoming request data thourogh OrderRequest and Retrieve the validated input data.
         $validUpdatedProductData = $request->validated();
 
-        $product->update($validUpdatedProductData);
+        $updatedProduct = $this->productService->updateProduct($product, $validUpdatedProductData);
 
         // Return a JSON response with the updated product
-        return response()->json($product, 200);
+        if($updatedProduct !== null)
+            // Return a JSON response with a success message and HTTP status code OK.
+            return response()->json($product, 200); 
+        else 
+            return response()->json(null, 403);
     }
 
     /**
@@ -86,10 +95,14 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        // Delete the specified product from the database
-        $product->delete();
+        // Delete the specified product using the ProductService.
+        $productSoftDeleted = $this->productService->deleteProduct($product);
 
-        // Return a JSON response with a success message and HTTP status code 204 (No Content)
-        return response()->json(null, 204);
+        if($productSoftDeleted === true)
+            // Return a JSON response with a success message and HTTP status code 204 (No Content).
+            return response()->json(null, 204); 
+        else
+            // Return a JSON response forbidden.
+            return response()->json(null, 403);
     }
 }
