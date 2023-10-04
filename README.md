@@ -98,5 +98,10 @@ You can run the project by using the following commands:
 
     # for the first time use 
     ? composer update
+    ? php artisan db:seed --class=UserManagerSeeder
     ? php artisan serve
+
+FilamentPhp admin panel is accessable from: http://127.0.0.1:8000/admin/login
+username:mohiti.ehsan@gmail.com
+password:120120120
     
