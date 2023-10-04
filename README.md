@@ -97,6 +97,15 @@ Fill out the .env with a brand new DB and you are good to go.
 You can run the project by using the following commands:
 
     # for the first time use 
-    ? composer update
-    ? php artisan serve
+     composer update
+     php artisan db:seed --class=UserManagerSeeder
+     php artisan serve
+
+     http://127.0.0.1:8000/admin/login //FilamentPhp admin panel is accessable from
+
+    username:mohiti.ehsan@gmail.com
+    password:120120120
     
+
+
+**** This panel is just for the show case of the table rows and you may create products with it. I would complete the task and add the simple blade panel for the admin to create products and edit them.
