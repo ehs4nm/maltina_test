@@ -85,7 +85,9 @@ I tried to Refactor the controllers, as they don't have too much bussiness logic
 ## TEST RESULTS
 Throughout the project, various aspects have been thoroughly tested. Here are the test results:
 
-![](./docs/test-results.png)
+![](./docs/test-result-0.png)
+![](./docs/test-result-1.png)
+![](./docs/test-result-2.png)
 
 
 # HOW TO USE THE CODE BASE
