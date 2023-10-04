@@ -11,6 +11,8 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = ['name', 'slug', 'price'];
+    // Eager load the type relationship with its options when querying for all products
+    protected $with = ['type.options'];
 
     // In boot method we create a slug from the name 
     public static function boot()

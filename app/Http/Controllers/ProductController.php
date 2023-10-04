@@ -21,7 +21,7 @@ class ProductController extends Controller
     public function index()
     {
         // Retrieve all products from the database
-        $products = Product::with('type.options')->get();
+        $products = Product::all();
         
         // Return a JSON response with the list of products
         return response()->json($products, 200);
