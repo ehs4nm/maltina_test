@@ -4,8 +4,10 @@ namespace App\Listeners;
 
 use App\Events\OrderStatusChanged;
 use App\Notifications\OrderStatusChangedNotification;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Log;
 
 class SendOrderStatusChangedNotification
 {
@@ -26,6 +28,13 @@ class SendOrderStatusChangedNotification
         $order = $event->order;
 
         // Notify the user about the order status change
-        $order->user->notify(new OrderStatusChangedNotification($order));
+        try {
+            $order->user->notify(new OrderStatusChangedNotification($order));
+        }
+        catch (Exception $e) {
+            // Log a custom message along with the exception
+            Log::error('An exception occurred while notifying the user: ' . $e->getMessage());
+            return;
+        }
     }
 }
