@@ -42,20 +42,21 @@ The following REST APIs should be implemented and any customer should be able to
 I will go with TDD aproche and in the first step i would create the ProductControllerTest. Then Product models, a few Factory/seeder classes. Then define the controller itself.
 
 In this challenge i would simply use "role" field to define the role. There are variuos ways to manage this better, (ex: roles, using role_user and permission_role,.. tables or using spatie/laravel-permission package).
+I use seperate event, listener and notification classes so it could be more decoupled, maybe we need to add an sms notification later or save the event in the DB or ..
 
-##Product model
+## Product model
 As my understanding of the product description, the products can have just one type at a time (Cookie has "Kind" type and does not have "Shots" type).
 I used string type for "type" and "customizations" field as it could added/change over time.
 Price is unsignedInteger as a non-decimal price we use in rials. It could be an unsignedBigInteger too.
 I want the ability to extend the behavior of products (types and customizations) without modifying the existing Product class (OCP principle). 
 First defining ProductModelTest.
 
-##Order model
+## Order model
 I use Enum for "consume_location" and "status" fields as i assume they won't change frequently.
 Orders are softdeleted so the record of orders are maintaned, specially if a customer wants to cancel an order (as we don't have a delete or cancel status for it).
 
-I use seperate event, listener and notification classes so it could be more decoupled, maybe we need to add an sms notification later or save the event in the DB or ..
-
+## Cart model
+Lets create a cart so we can keep track of products and selected options that users add to thier orders, So I create a cart model and a cart_product table. Keep in mind that we could have created an order_product table and skip the cart model. In this example the cart model could be kind of over design but I go with it.
 
 ## RESULTS
 | # 	| Description                                      	| Status 	|
