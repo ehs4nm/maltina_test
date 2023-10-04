@@ -2,7 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\Option;
 use App\Models\Order;
+use App\Models\Product;
+use App\Models\Type;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -385,4 +388,85 @@ class OrderApiTest extends TestCase
         // Check if the response indicates success (HTTP status code 204 for No Content)
         $response->assertStatus(204);
     }
+
+    /** @test */
+    public function a_customer_can_create_an_order_assigned_a_cart_with_multiple_products_assigned()
+    {
+        // Create a customer and generate a Sanctum token
+        $customer = User::factory()->create(['role' => 'CUSTOMER']);
+        $token = $customer->createToken('api-token')->plainTextToken;
+
+        // Create some products and options
+        $type = Type::factory()->create();
+        $products = Product::factory(3)->create(['type_id' => $type->id]);
+        $options = Option::factory(3)->create(['type_id' => $type->id]);
+        
+        // Set the Sanctum token on the request headers
+        $headers = ['Authorization' => "Bearer $token"];
+
+        // A valid order data
+        $orderData = [
+            'user_id' => $customer->id,
+            'consume_location' => 'IN_SHOP',
+            'products' => [
+                [
+                    'product_id' => $products[0]->id,
+                    'option_id' => $options[0]->id,
+                    'quantity' => 2,
+                ],
+                [
+                    'product_id' => $products[1]->id,
+                    'option_id' => $options[1]->id,
+                    'quantity' => 1,
+                ],
+                [
+                    'product_id' => $products[2]->id,
+                    'option_id' => $options[2]->id,
+                    'quantity' => 3,
+                ],
+            ],
+        ];
+
+        // Send a POST request to store the order
+        $response = $this->withHeaders($headers)->post('/api/orders', $orderData);
+
+        // Check if the response indicates a successful creation (HTTP status code 201 Created)
+        $response->assertStatus(201);
+
+        $total_price = $products[0]->price * 2 + $products[1]->price * 1 + $products[2]->price * 3;
+
+        $responseOrderData = [
+            'user_id' => $customer->id,
+            'total_price' => $total_price,
+            'status' => 'WAITING',
+            'consume_location' => 'IN_SHOP',
+            'products' => [
+                [
+                    'product_id' => $products[0]->id,
+                    'option_id' => $options[0]->id,
+                    'quantity' => 2,
+                ],
+                [
+                    'product_id' => $products[1]->id,
+                    'option_id' => $options[1]->id,
+                    'quantity' => 1,
+                ],
+                [
+                    'product_id' => $products[2]->id,
+                    'option_id' => $options[2]->id,
+                    'quantity' => 3,
+                ],
+            ],
+        ];
+
+        // Check if the response includes the created order data
+        $response->assertJson($responseOrderData);
+
+        // Check if the order is actually stored in the database
+        $this->assertDatabaseHas('orders', [
+            'user_id' => $customer->id,
+            'consume_location' => 'IN_SHOP',
+        ]);
+    }
+
 }
