@@ -139,7 +139,7 @@ class ProductTest extends TestCase
         $response = $this->get("/products/{$product->slug}");
 
         // Check if the response includes the product data
-        $response->assertStatus(200)->dump()
+        $response->assertStatus(200)
             ->assertJson([
                 'name' => $product->name,
                 'slug' => $product->slug,
@@ -161,7 +161,7 @@ class ProductTest extends TestCase
         $response = $this->get("/products/{$product->slug}");
 
         // Check if the response includes the product data
-        $response->assertStatus(200)->dump()
+        $response->assertStatus(200)
             ->assertJson([
                 'name' => $product->name,
                 'slug' => $product->slug,
