@@ -78,7 +78,6 @@ I tried to Refactor the controllers, as they don't have too much bussiness logic
 | 11 	| Clean git commits that shows my work progress. 	  | Done ✅|
 | 12 	| meaningful comments and docstrings                | Done ✅|
 | 13 	| Refactoring and Add services                      | Done ✅|
-| 14 	| Swagger 	                                        | Not Yet ❌|
 |---	|--------------------------------------------------	|--------	|
 
 
@@ -94,12 +93,10 @@ Throughout the project, various aspects have been thoroughly tested. Here are th
 To get started with the code base, follow these instructions:
 
 ##UP AND RUNNING
-
-You can run the entire project as a container using the following commands:
+Fill out the .env with a brand new DB and you are good to go.
+You can run the project by using the following commands:
 
     # for the first time use 
-    composer update
+    ? composer update
+    ? php artisan serve
     
-## You may access Swagger documentation
-
-at: http://127.0.0.1/api/documentation
