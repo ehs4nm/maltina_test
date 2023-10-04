@@ -9,13 +9,18 @@ use App\Models\Cart;
 use App\Models\Option;
 use App\Models\Order;
 use App\Models\Product;
+use App\Services\OrderService;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function __construct()
+    private $orderService;
+
+    public function __construct(OrderService $orderService)
     {
         $this->authorizeResource(Order::class, 'order');
+        // Inject the OrderService into OrderController
+        $this->orderService = $orderService;
     }
 
     /**
@@ -45,31 +50,9 @@ class OrderController extends Controller
         $validatedOrderData = $request->validated();
         
         // Create and store the new order using the validated data.
-        $order = Order::create($validatedOrderData);
-        $cart = Cart::create(['order_id' => $order->id]);
+        $order = $this->orderService->createOrder($validatedOrderData);
 
-        // A var to save the total_price for order
-        $total_price = 0;
-
-        // Attach the products with chosen options to the order
-        foreach ($validatedOrderData['products'] as $productData) {
-            $product = Product::find($productData['product_id']);
-            $option = Option::find($productData['option_id']);
-            
-            // Attach the product to the order and set the quantity and option
-            $cart->products()->attach($product->id, [
-                'option_id' => $option->id,
-                'quantity'  => $productData['quantity'],
-                'sum_price' => $productData['quantity'] * $product->price,
-            ]);
-    
-            // Sum of the price of each product * quantity
-            $total_price +=  $product->price * $productData['quantity'];
-        }
-        $order->update(['total_price' => $total_price]);
         // Return a JSON response with the created order and HTTP status code 201 (Created).
-        $order = Order::with('cart.products')->find($order->id);
-
         return response()->json(new OrderResource($order), 201);
         
     }
@@ -99,17 +82,14 @@ class OrderController extends Controller
         // Validate the incoming request data thourogh OrderRequest and Retrieve the validated input data.
         $validatedUpdateOrderData = $request->validated();
 
-        if(auth()->user()->role === 'CUSTOMER' && $order->status === 'WAITING') {
-            $order->update($validatedUpdateOrderData); // Update the specified order if user is a customer and order is waiting.
-            return response()->json(null, 200); // Return a JSON response with a success message and HTTP status code OK.
-        }
-        
-        if(auth()->user()->role === 'MANAGER') {
-            $order->update($validatedUpdateOrderData); // Update the specified order if user is a manager.
-            return response()->json(null, 200); // Return a JSON response with a success message and HTTP status code OK.
-        }
+        // Update the specified order using the OrderService.
+        $updatedOrder = $this->orderService->updateOrder($order, $validatedUpdateOrderData);
 
-        return response()->json(null, 403);
+        if($updatedOrder !== null)
+            // Return a JSON response with a success message and HTTP status code OK.
+            return response()->json(null, 200); 
+        else 
+            return response()->json(null, 403);
     }
 
     /**
@@ -120,16 +100,14 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        if(auth()->user()->role === 'CUSTOMER' && $order->status === 'WAITING') {
-            $order->delete(); // Delete the specified order from the database if user is a customer and order is waiting.
-            return response()->json(null, 204); // Return a JSON response with a success message and HTTP status code 204 (No Content).
-        }
+        // Delete the specified order using the OrderService.
+        $orderSoftDeleted = $this->orderService->deleteOrder($order);
         
-        if(auth()->user()->role === 'MANAGER') {
-            $order->delete(); // Delete the specified order from the database if user is a manager.
-            return response()->json(null, 204); // Return a JSON response with a success message and HTTP status code 204 (No Content).
-        }
-
-        return response()->json(null, 403);
+        if($orderSoftDeleted === true)
+            // Return a JSON response with a success message and HTTP status code 204 (No Content).
+            return response()->json(null, 204); 
+        else
+            // Return a JSON response forbidden.
+            return response()->json(null, 403);
     }
 }
