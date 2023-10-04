@@ -1,9 +1,8 @@
 # maltina_test
 
-I haven't finished the task yet, but i am commiting more, in this week.
+I haven't finished the task yet, but i am commiting more, thanks for your time.
 
 1. I will add some blade page for admin panel and change the test acordingly
-2. the procces of reserveing some product with selected option is ongoing.
 --------------------------------------------------------------------------------
 
 Rock star shop Challenge
@@ -58,10 +57,13 @@ Orders are softdeleted so the record of orders are maintaned, specially if a cus
 ## Cart model
 Lets create a cart so we can keep track of products and selected options that users add to thier orders, So I create a cart model and a cart_product table. Keep in mind that we could have created an order_product table and skip the cart model. In this example the cart model could be kind of over design but I go with it.
 
+## Refactor and adding a few service class
+I tried to Refactor the controllers, as they don't have too much bussiness logic, these classes are small.
+
 ## RESULTS
 | # 	| Description                                      	| Status 	|
 |---	|--------------------------------------------------	|--------	|
-| 1 	| TDD                                              	| ongoing 🔲|
+| 1 	| TDD                                              	| Done ✅|
 | 2 	| Api: Manager can define products                  | Done ✅|
 | 3 	| Api: Manager can change orders status             | Done ✅|
 | 2 	| Admin Panel: Manager can define products          | ongoing 🔲|
@@ -74,8 +76,8 @@ Lets create a cart so we can keep track of products and selected options that us
 | 9 	| After each status change on order: notify the customer via email.          | Done ✅|
 | 10 	| clone the repository (public mode)               	| Done ✅|
 | 11 	| Clean git commits that shows my work progress. 	  | Done ✅|
-| 12 	| meaningful comments and docstrings                | ongoing 🔲|
-| 13 	| Refactoring and Add services                      | Not Yet ❌|
+| 12 	| meaningful comments and docstrings                | Done ✅|
+| 13 	| Refactoring and Add services                      | Done ✅|
 | 14 	| Swagger 	                                        | Not Yet ❌|
 |---	|--------------------------------------------------	|--------	|
 
