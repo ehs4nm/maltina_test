@@ -32,7 +32,7 @@ class OrderResource extends JsonResource
             'total_price' => $this->total_price,
             'consume_location' => $this->consume_location,
             'user_id' => $this->user_id, // it should be hidden too, not letting the consumer know the id for users
-            'products' => $this->transformProducts($this->cart->products),
+            'products' => $this->when($this->cart && $this->cart->products, $this->transformProducts($this->cart->products)),
             // 'products' => ProductResource::collection($this->whenLoaded('cart.products')),
         ];
     }
