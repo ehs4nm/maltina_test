@@ -28,21 +28,15 @@ class ProductTest extends TestCase
         // Retrieve all products
         $response = $this->get('/products');
 
+        $response->assertViewIs('dashboard.products.index');
+
+        // $response->assertViewHasAll(['products' => $products]);
+
         // Check if the response includes the products data
-        $response->assertStatus(200)
-            ->assertJson([
-                [
-                    'id' => $product1->id,
-                    'name' => $product1->name,
-                    'price' => $product1->price,
-                ],
-                [
-                    'id' => $product2->id,
-                    'name' => $product2->name,
-                    'price' => $product2->price,
-                ],
-            ])
-            ->assertJsonCount(2); // Ensure that two products are returned in the response.
+        // Ensure that two products are returned in the response.
+        $response->assertOk() // Response code 200
+            ->assertSeeInOrder([$product1->name, $product1->price, $product1->type, $product1->type?->options->pluck()])
+            ->assertSeeInOrder([$product2->name, $product2->price, $product2->type, $product2->type?->options->pluck()]); 
     }
 
     /** @test */
@@ -60,20 +54,9 @@ class ProductTest extends TestCase
         $response = $this->get('/products');
 
         // Check if the response includes the products data
-        $response->assertStatus(200)
-            ->assertJson([
-                [
-                    'id' => $product1->id,
-                    'name' => $product1->name,
-                    'price' => $product1->price,
-                ],
-                [
-                    'id' => $product2->id,
-                    'name' => $product2->name,
-                    'price' => $product2->price,
-                ],
-            ])
-            ->assertJsonCount(2); // Ensure that two products are returned in the response.
+        $response->assertOk() // Response code 200
+            ->assertSeeInOrder([$product1->name, $product1->price, $product1->type, $product1->type?->options->pluck()])
+            ->assertSeeInOrder([$product2->name, $product2->price, $product2->type, $product2->type?->options->pluck()]); 
     }
 
     /** @test */
