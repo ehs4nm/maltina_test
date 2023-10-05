@@ -20,5 +20,7 @@ class UserManagerSeeder extends Seeder
             'role' => 'MANAGER',
             'password' => bcrypt('120120120'),
         ]);
+
+        $customers = User::factory(3)->create(['role' => 'CUSTOMER']);
     }
 }
