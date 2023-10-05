@@ -98,7 +98,7 @@ You can run the project by using the following commands:
 
     # for the first time use 
      composer update
-     php artisan db:seed --class=UserManagerSeeder
+     php artisan db:seed
      php artisan serve
 
      http://127.0.0.1:8000/admin/login //FilamentPhp admin panel is accessable from
