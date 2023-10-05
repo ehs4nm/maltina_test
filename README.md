@@ -98,6 +98,7 @@ You can run the project by using the following commands:
 
     # for the first time use 
      composer update
+     php artisan migrate
      php artisan db:seed
      php artisan serve
 
