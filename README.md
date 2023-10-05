@@ -89,7 +89,7 @@ Throughout the project, various aspects have been thoroughly tested. Here are th
 ![](./docs/test-result-2.png)
 
 
-# HOW TO USE THE CODE BASE
+## HOW TO USE THE CODE BASE
 To get started with the code base, follow these instructions:
 
 ##UP AND RUNNING
