@@ -25,10 +25,10 @@ class ProductController extends Controller
     public function index()
     {
         // Retrieve all products from the database
-        $products = Product::all();
+        $products = Product::paginate(10);
         
         // Return a JSON response with the list of products
-        return response()->json($products, 200);
+        return view('dashboard.products.index', ['products' => $products]);
     }
 
     /**
