@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Type;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Validator as FacadesValidator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
@@ -25,7 +26,7 @@ class ProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|unique:products',
+            'name' => 'required|string|max:255|unique:products,name,'.$this->route()->product?->id, // Appending the current product's ID to the unique rule so it is excluded from the unique check
             'price' => 'required|integer|min:0|max:999999',
             'type' => 'string|max:255',
         ];
