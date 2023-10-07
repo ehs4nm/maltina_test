@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Product;
+use App\Models\Type;
 
 class ProductService
 {
@@ -15,6 +16,15 @@ class ProductService
     public function createProduct(array $validatedProductData): ?Product
     {
         // Create and store the new Product
+        $typeName = $validatedProductData['type'];
+
+        // Check if the name of type user sent is created before or is new
+        if (! Type::where('name', $typeName)->exists()) 
+            // Create type if it is new
+            $type = Type::create(['name' => $typeName]);
+        else  $type = Type::where('name', $typeName)->first(); // set type if type existed before
+
+        $validatedProductData['type_id'] = $type->id; // set type_id in $validatedProductData
         $product = Product::create($validatedProductData);
 
         return $product;
