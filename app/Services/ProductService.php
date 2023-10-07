@@ -34,14 +34,15 @@ class ProductService
      * Update a product.
      *
      * @param  Product  $product
-     * @param  array    $validatedUpdateOrderData
+     * @param  array    $validatedUpdateProductData
      * @return Product|null
      */
-    public function updateProduct(Product $product, array $validatedUpdateOrderData): ?Product
+    public function updateProduct(Product $product, array $validatedUpdateProductData): ?Product
     {
         // Update the specified product based on the user's role.
+        dd($validatedUpdateProductData);
         if (auth()->user()->role === 'MANAGER') {
-            $product->update($validatedUpdateOrderData);
+            $product->update($validatedUpdateProductData);
             return $product;
         }
 
