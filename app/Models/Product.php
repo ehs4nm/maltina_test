@@ -10,7 +10,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'price'];
+    protected $fillable = ['name', 'slug', 'price', 'type_id'];
     // Eager load the type relationship with its options when querying for all products
     protected $with = ['type.options'];
 

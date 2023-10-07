@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Product;
+use App\Models\Type;
 
 class ProductService
 {
@@ -15,6 +16,15 @@ class ProductService
     public function createProduct(array $validatedProductData): ?Product
     {
         // Create and store the new Product
+        $typeName = $validatedProductData['type'];
+
+        // Check if the name of type user sent is created before or is new
+        if (! Type::where('name', $typeName)->exists()) 
+            // Create type if it is new
+            $type = Type::create(['name' => $typeName]);
+        else  $type = Type::where('name', $typeName)->first(); // set type if type existed before
+
+        $validatedProductData['type_id'] = $type->id; // set type_id in $validatedProductData
         $product = Product::create($validatedProductData);
 
         return $product;
@@ -24,14 +34,24 @@ class ProductService
      * Update a product.
      *
      * @param  Product  $product
-     * @param  array    $validatedUpdateOrderData
+     * @param  array    $validatedUpdateProductData
      * @return Product|null
      */
-    public function updateProduct(Product $product, array $validatedUpdateOrderData): ?Product
+    public function updateProduct(Product $product, array $validatedUpdateProductData): ?Product
     {
         // Update the specified product based on the user's role.
         if (auth()->user()->role === 'MANAGER') {
-            $product->update($validatedUpdateOrderData);
+            $typeName = $validatedUpdateProductData['type'] ?? 'undefined';
+
+            // Check if the name of type user sent is created before or is new
+            if (! Type::where('name', $typeName)->exists()) 
+                // Create type if it is new
+                $type = Type::create(['name' => $typeName]);
+            else  $type = Type::where('name', $typeName)->first(); // set type if type existed before
+
+            $validatedUpdateProductData['type_id'] = $type->id;
+
+            $product->update($validatedUpdateProductData);
             return $product;
         }
 
