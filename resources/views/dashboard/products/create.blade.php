@@ -27,28 +27,28 @@
                                         </ul>
                                     </div>
                                 @endif
-                                <div class="px-4 sm:p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                                <div class="px-4 sm:p-6 bg-white dark:bg-gray-800 sm:rounded-lg">
                                     <div class="max-w-max">
-                                        <label for="name"></label>
+                                        <label for="name">Name</label>
                                         <input type="text" name="name" id="name" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" required autofocus autocomplete="name">
                                     </div>
                                 </div>
-                                <div class="px-4 sm:p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                                <div class="px-4 sm:p-6 bg-white dark:bg-gray-800 sm:rounded-lg">
                                     <div class="max-w-max">
-                                        <label for="price"></label>
+                                        <label for="price">Price <small>(max:999999)</small></label>
                                         <input type="number" name="price" id="price" min=0 class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" required autofocus autocomplete="price">
                                     </div>
                                 </div>
                             </div>
                             <div>
                                 <div>
-                                    <div class="px-4 sm:p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                                    <div class="px-4 sm:p-6 bg-white dark:bg-gray-800 sm:rounded-lg">
                                         <div class="max-w-max">
                                             <label for="type">Create a new Type <small>or select from drop down below</small></label>
                                             <input x-model="typeName" type="text" name="type" id="type" min=0 class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" value="{{ old('type') }}" required autofocus autocomplete="type" placeholder="Name of a new Type to be created">
                                         </div>
                                     </div>
-                                    <div class="px-4 sm:p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                                    <div class="px-4 sm:p-6 bg-white dark:bg-gray-800 sm:rounded-lg">
                                         <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select a type for the product</label>
                                         <select x-model:click="selectedTypeName" x-on:change="showTypeId = true; typeName = selectedTypeName" name="type_id" id="type_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                             @foreach($types as $key => $type)
