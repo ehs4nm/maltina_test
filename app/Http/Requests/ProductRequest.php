@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Type;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class ProductRequest extends FormRequest
 {
@@ -22,8 +25,9 @@ class ProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:products',
             'price' => 'required|integer|min:0|max:999999',
+            'type' => 'required|string|max:255',
         ];
     }
 }
