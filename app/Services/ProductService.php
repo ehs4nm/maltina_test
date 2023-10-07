@@ -40,8 +40,17 @@ class ProductService
     public function updateProduct(Product $product, array $validatedUpdateProductData): ?Product
     {
         // Update the specified product based on the user's role.
-        dd($validatedUpdateProductData);
         if (auth()->user()->role === 'MANAGER') {
+            $typeName = $validatedUpdateProductData['type'] ?? 'undefined';
+
+            // Check if the name of type user sent is created before or is new
+            if (! Type::where('name', $typeName)->exists()) 
+                // Create type if it is new
+                $type = Type::create(['name' => $typeName]);
+            else  $type = Type::where('name', $typeName)->first(); // set type if type existed before
+
+            $validatedUpdateProductData['type_id'] = $type->id;
+
             $product->update($validatedUpdateProductData);
             return $product;
         }
