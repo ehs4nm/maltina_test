@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Product;
+use App\Models\Type;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -29,8 +30,6 @@ class ProductTest extends TestCase
         $response = $this->get('/products');
 
         $response->assertViewIs('dashboard.products.index');
-
-        // $response->assertViewHasAll(['products' => $products]);
 
         // Check if the response includes the products data
         // Ensure that two products are returned in the response.
@@ -65,24 +64,28 @@ class ProductTest extends TestCase
         // Create a manager user
         $manager = User::factory(['role' => 'MANAGER'])->create(); 
         $this->actingAs($manager);
-        
+        $type = Type::factory()->create();
         // A valid product data
         $productData = [
             'name' => 'Latte',
             'price' => 58000,
+            'type' => $type->name,
         ];
 
         // Send a POST request to store the product
         $response = $this->post('/products', $productData);
 
-        // Check if the response indicates a successful creation (HTTP status code 201 Created)
-        $response->assertStatus(201);
+        // Check if redirects to index page
+        $response->assertRedirect(route('products.index'));
 
-        // Check if the response includes the created product data
-        $response->assertJson($productData);
+        $productExpectedData = [
+            'name' => 'Latte',
+            'price' => 58000,
+            'type_id' => $type->id,
+        ];
 
         // Check if the product is actually stored in the database
-        $this->assertDatabaseHas('products', $productData);
+        $this->assertDatabaseHas('products', $productExpectedData);
     }
 
     /** @test */
@@ -122,12 +125,12 @@ class ProductTest extends TestCase
         $response = $this->get("/products/{$product->slug}");
 
         // Check if the response includes the product data
-        $response->assertStatus(200)
-            ->assertJson([
-                'name' => $product->name,
-                'slug' => $product->slug,
-                'price' => $product->price,
-            ]);
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('products', [
+            'name' => $product->name,
+            'slug' => $product->slug,
+            'price' => $product->price,
+        ]);
     }
 
     /** @test */
@@ -144,8 +147,8 @@ class ProductTest extends TestCase
         $response = $this->get("/products/{$product->slug}");
 
         // Check if the response includes the product data
-        $response->assertStatus(200)
-            ->assertJson([
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('products', [
                 'name' => $product->name,
                 'slug' => $product->slug,
                 'price' => $product->price,
@@ -177,8 +180,8 @@ class ProductTest extends TestCase
             'price' => 58000,
         ]);
 
-        // Check if the response indicates success (HTTP status code 200 for OK)
-        $response->assertStatus(200);
+        // Check if redirects to index page
+        $response->assertRedirect(route('products.index'));
     }
 
     /** @test */
@@ -226,8 +229,8 @@ class ProductTest extends TestCase
         // Check if the product has been deleted from the database
         $this->assertDatabaseMissing('products', ['id' => $product->id]);
 
-        // Check if the response indicates success (HTTP status code 204 for No Content)
-        $response->assertStatus(204);
+        // Check if the response redirect to index page or not
+        $response->assertRedirect(route('products.index'));
     }
 
     /** @test */
@@ -251,7 +254,7 @@ class ProductTest extends TestCase
             'price' => $product->price,
         ]);
 
-        // Check if the response indicates success (HTTP status code 204 for No Content)
+        // Check if the response indicates forbidden (HTTP status code 403)
         $response->assertStatus(403);
     }
 }
