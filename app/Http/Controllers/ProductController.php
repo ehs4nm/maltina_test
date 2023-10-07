@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
+use App\Models\Option;
 use App\Models\Product;
+use App\Models\Type;
 use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,6 +19,7 @@ class ProductController extends Controller
         $this->productService = $productService;
         $this->authorizeResource(Product::class, 'product');
     }
+
     /**
      * Display a listing of the products.
      *
@@ -29,6 +32,20 @@ class ProductController extends Controller
         
         // Return a JSON response with the list of products
         return view('dashboard.products.index', ['products' => $products]);
+    }
+
+    /**
+     * Show the form for creating a new product.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function create()
+    {
+        // Display the product creation form.
+        // return a view that includes a form for creating a new product.
+        $types = Type::with('options')->get();
+
+        return view('dashboard.products.create', ['types' => $types]);
     }
 
     /**
