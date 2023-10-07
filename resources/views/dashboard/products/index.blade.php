@@ -16,6 +16,19 @@
                         <a href="{{ route('products.create') }}" class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-4 py-1.5 text-center mr-2 mb-2">Create New Product</a>
                     </div>
             
+                    @if($errors->any())
+                        <div class="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4 mb-2" role="alert">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li class="font-semibold mr-2 text-left flex-auto">{{ $error }}</li> 
+                                @endforeach
+                                @foreach ($success->all() as $success)
+                                <li class="font-semibold mr-2 text-left flex-auto">{{ $error }}</li> 
+                            @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    
                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
@@ -37,11 +50,12 @@
                                     <td class="px-6 py-4">{{ $product->type ? $product->type->name . ': ' .  str_replace(['[', ']', '"'], ' ',$product->type?->options->pluck('name')) : '-' }}</td>
                                     <td class="flex px-6 py-4">
                                         <!-- Add buttons for editing and deleting products -->
-                                        <a href="{{ route('products.edit', $product->id) }}" class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-4 py-1.5 text-center mr-2 mb-2">Edit</a>
-                                        <form action="{{ route('products.destroy', $product->id) }}" method="POST">
+                                        <a href="{{ route('products.show', $product->slug) }}" class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-4 py-1.5 text-center mr-2 mb-2">Show</a>
+                                        <a href="{{ route('products.edit', $product->slug) }}" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-1.5 mr-2 mb-2 dark:focus:ring-yellow-900">Edit</a>
+                                        <form action="{{ route('products.destroy', $product->slug) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button" type="submit" class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-4 py-1.5 text-center mr-2 mb-2">Delete</button>
+                                            <button type="submit" class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium rounded-lg text-sm px-4 py-1.5 text-center mr-2 mb-2">Delete</button>
                                         </form>
                                     </td>
                                 </tr>
