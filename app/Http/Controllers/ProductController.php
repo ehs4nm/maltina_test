@@ -65,9 +65,6 @@ class ProductController extends Controller
         // Create and store the new order using the ProductService.
         $product = $this->productService->createProduct($validatedProductData);
 
-        // Retrieve all products from the database
-        $products = Product::paginate(10);
-
         // Return a view with the newly created product.
         return redirect()->route('products.index');
     }
